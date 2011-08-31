@@ -32,15 +32,12 @@ import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
@@ -50,16 +47,11 @@ import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 
-import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BlockType;
 import com.sk89q.worldedit.blocks.ItemType;
-import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.blacklist.events.BlockBreakBlacklistEvent;
 import com.sk89q.worldguard.blacklist.events.BlockPlaceBlacklistEvent;
 import com.sk89q.worldguard.blacklist.events.DestroyWithBlacklistEvent;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.managers.RegionManager;
 
 /**
  * The listener for block events.
@@ -87,7 +79,6 @@ public class WorldGuardBlockListener extends BlockListener {
      * Register events.
      */
     public void registerEvents() {
-        registerEvent("BLOCK_DAMAGE", Priority.High);
         registerEvent("BLOCK_BREAK", Priority.High);
         registerEvent("BLOCK_FROMTO", Priority.Normal);
         registerEvent("BLOCK_IGNITE", Priority.High);
@@ -100,8 +91,6 @@ public class WorldGuardBlockListener extends BlockListener {
         registerEvent("BLOCK_FORM", Priority.High);
         registerEvent("BLOCK_SPREAD", Priority.High);
         registerEvent("BLOCK_FADE", Priority.High);
-        registerEvent("BLOCK_PISTON_EXTEND", Priority.High);
-        registerEvent("BLOCK_PISTON_RETRACT", Priority.High);
     }
 
     /**
@@ -141,29 +130,6 @@ public class WorldGuardBlockListener extends BlockListener {
     }
     
     /**
-     * Called when a block is damaged.
-     */
-    @Override
-    public void onBlockDamage(BlockDamageEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
-        Player player = event.getPlayer();
-        Block blockDamaged = event.getBlock();
-
-        // Cake are damaged and not broken when they are eaten, so we must
-        // handle them a bit separately
-        if (blockDamaged.getType() == Material.CAKE_BLOCK) {
-            if (!plugin.getGlobalRegionManager().canBuild(player, blockDamaged)) {
-                player.sendMessage(ChatColor.DARK_RED + "You're not invited to this tea party!");
-                event.setCancelled(true);
-                return;
-            }
-        }
-    }
-    
-    /**
      * Called when a block is broken.
      */
     @Override
@@ -183,12 +149,6 @@ public class WorldGuardBlockListener extends BlockListener {
                 held.setDurability((short) -1);
                 player.setItemInHand(held);
             }
-        }
-
-        if (!plugin.getGlobalRegionManager().canBuild(player, event.getBlock())) {
-            player.sendMessage(ChatColor.DARK_RED + "You don't have permission for this area.");
-            event.setCancelled(true);
-            return;
         }
 
         if (wcfg.getBlacklist() != null) {
@@ -290,20 +250,6 @@ public class WorldGuardBlockListener extends BlockListener {
                 return;
             }
         }
-
-        if (wcfg.highFreqFlags && isWater
-                && !plugin.getGlobalRegionManager().allows(DefaultFlag.WATER_FLOW,
-                blockFrom.getLocation())) {
-            event.setCancelled(true);
-            return;
-        }
-
-        if (wcfg.highFreqFlags && isLava
-                && !plugin.getGlobalRegionManager().allows(DefaultFlag.LAVA_FLOW,
-                blockFrom.getLocation())) {
-            event.setCancelled(true);
-            return;
-        }
     }
 
     /**
@@ -370,42 +316,6 @@ public class WorldGuardBlockListener extends BlockListener {
                 return;
             }
         }
-
-        if (wcfg.useRegions) {
-            Vector pt = toVector(block);
-            Player player = event.getPlayer();
-            RegionManager mgr = plugin.getGlobalRegionManager().get(world);
-            ApplicableRegionSet set = mgr.getApplicableRegions(pt);
-
-            if (player != null && !plugin.getGlobalRegionManager().hasBypass(player, world)) {
-                LocalPlayer localPlayer = plugin.wrapPlayer(player);
-
-                if (cause == IgniteCause.FLINT_AND_STEEL) {
-                    if (!set.canBuild(localPlayer)) {
-                        event.setCancelled(true);
-                        return;
-                    }
-                    if (!set.allows(DefaultFlag.LIGHTER)
-                            && !plugin.hasPermission(player, "worldguard.override.lighter")) {
-                        event.setCancelled(true);
-                        return;
-                    }
-                }
-            }
-
-            if (wcfg.highFreqFlags && isFireSpread
-                    && !set.allows(DefaultFlag.FIRE_SPREAD)) {
-                event.setCancelled(true);
-                return;
-            }
-
-            if (wcfg.highFreqFlags && cause == IgniteCause.LAVA
-                    && !set.allows(DefaultFlag.LAVA_FIRE)) {
-                event.setCancelled(true);
-                return;
-            }
-        }
-
     }
 
     /**
@@ -448,19 +358,6 @@ public class WorldGuardBlockListener extends BlockListener {
         if (wcfg.isChestProtected(event.getBlock())) {
             event.setCancelled(true);
             return;
-        }
-        
-        if (wcfg.useRegions) {
-            Block block = event.getBlock();
-            Vector pt = toVector(block);
-            RegionManager mgr = plugin.getGlobalRegionManager().get(block.getWorld());
-            ApplicableRegionSet set = mgr.getApplicableRegions(pt);
-
-            if (!set.allows(DefaultFlag.FIRE_SPREAD)) {
-                event.setCancelled(true);
-                return;
-            }
-
         }
     }
 
@@ -516,14 +413,6 @@ public class WorldGuardBlockListener extends BlockListener {
 
         ConfigurationManager cfg = plugin.getGlobalStateManager();
         WorldConfiguration wcfg = cfg.get(world);
-
-        if (wcfg.useRegions) {
-            if (!plugin.getGlobalRegionManager().canBuild(player, blockPlaced.getLocation())) {
-                player.sendMessage(ChatColor.DARK_RED + "You don't have permission for this area.");
-                event.setCancelled(true);
-                return;
-            }
-        }
 
         if (wcfg.getBlacklist() != null) {
             if (!wcfg.getBlacklist().check(
@@ -653,12 +542,6 @@ public class WorldGuardBlockListener extends BlockListener {
                 return;
             }
         }
-
-        if (!plugin.getGlobalRegionManager().canBuild(player, event.getBlock())) {
-            player.sendMessage(ChatColor.DARK_RED + "You don't have permission for this area.");
-            event.setCancelled(true);
-            return;
-        }
     }
 
     @Override
@@ -678,13 +561,6 @@ public class WorldGuardBlockListener extends BlockListener {
         if (wcfg.disableLeafDecay) {
             event.setCancelled(true);
             return;
-        }
-
-        if (wcfg.useRegions) {
-            if (!plugin.getGlobalRegionManager().allows(DefaultFlag.LEAF_DECAY,
-                    event.getBlock().getLocation())) {
-                event.setCancelled(true);
-            }
         }
     }
 
@@ -711,20 +587,10 @@ public class WorldGuardBlockListener extends BlockListener {
                 event.setCancelled(true);
                 return;
             }
-            if (wcfg.useRegions && !plugin.getGlobalRegionManager().allows(
-                    DefaultFlag.ICE_FORM, event.getBlock().getLocation())) {
-                event.setCancelled(true);
-                return;
-            }
         }
 
         if (type == Material.SNOW) {
             if (wcfg.disableSnowFormation) {
-                event.setCancelled(true);
-                return;
-            }
-            if (wcfg.useRegions && !plugin.getGlobalRegionManager().allows(
-                    DefaultFlag.SNOW_FALL, event.getBlock().getLocation())) {
                 event.setCancelled(true);
                 return;
             }
@@ -754,11 +620,6 @@ public class WorldGuardBlockListener extends BlockListener {
                 event.setCancelled(true);
                 return;
             }
-            if (wcfg.useRegions && !plugin.getGlobalRegionManager().allows(
-                    DefaultFlag.MUSHROOMS, event.getBlock().getLocation())) {
-                event.setCancelled(true);
-                return;
-            }
         }
     }
 
@@ -780,66 +641,12 @@ public class WorldGuardBlockListener extends BlockListener {
                 event.setCancelled(true);
                 return;
             }
-            if (wcfg.useRegions && !plugin.getGlobalRegionManager().allows(
-                    DefaultFlag.ICE_MELT, event.getBlock().getLocation())) {
-                event.setCancelled(true);
-                return;
-            }
         }
 
         if (type == Material.SNOW) {
             if (wcfg.disableSnowMelting) {
                 event.setCancelled(true);
                 return;
-            }
-            if (wcfg.useRegions && !plugin.getGlobalRegionManager().allows(
-                    DefaultFlag.SNOW_MELT, event.getBlock().getLocation())) {
-                event.setCancelled(true);
-                return;
-            }
-        }
-    }
-
-    /**
-     * Called when a piston extends
-     */
-    public void onBlockPistonExtend(BlockPistonExtendEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
-        ConfigurationManager cfg = plugin.getGlobalStateManager();
-        WorldConfiguration wcfg = cfg.get(event.getBlock().getWorld());
-
-        if (wcfg.useRegions) {
-            if (!plugin.getGlobalRegionManager().allows(DefaultFlag.PISTONS, event.getBlock().getLocation())) {
-                event.setCancelled(true);
-                return;
-            }
-            for (Block block : event.getBlocks()) {
-                if (!plugin.getGlobalRegionManager().allows(DefaultFlag.PISTONS, block.getLocation())) {
-                    event.setCancelled(true);
-                    return;
-                }
-            }
-        }
-    }
-
-    /**
-     * Called when a piston retracts
-     */
-    public void onBlockPistonRetract(BlockPistonRetractEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
-
-        ConfigurationManager cfg = plugin.getGlobalStateManager();
-        WorldConfiguration wcfg = cfg.get(event.getBlock().getWorld());
-
-        if (wcfg.useRegions && event.isSticky()) {
-            if (!(plugin.getGlobalRegionManager().allows(DefaultFlag.PISTONS, event.getRetractLocation()))
-                    && !(plugin.getGlobalRegionManager().allows(DefaultFlag.PISTONS, event.getBlock().getLocation()))) {
-                event.setCancelled(true);
             }
         }
     }

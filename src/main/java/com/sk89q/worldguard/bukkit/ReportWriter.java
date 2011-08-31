@@ -35,12 +35,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 
-import com.sk89q.worldguard.protection.GlobalRegionManager;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.flags.Flag;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.util.LogListBlock;
 
 public class ReportWriter {
@@ -58,7 +52,7 @@ public class ReportWriter {
         appendWorldInformation(plugin.getServer().getWorlds());
         appendGlobalConfiguration(plugin.getGlobalStateManager());
         appendWorldConfigurations(plugin, plugin.getServer().getWorlds(),
-                plugin.getGlobalRegionManager(), plugin.getGlobalStateManager());
+                plugin.getGlobalStateManager());
         appendln("-------------");
         appendln("END OF REPORT");
         appendln();
@@ -244,7 +238,7 @@ public class ReportWriter {
     }
     
     private void appendWorldConfigurations(WorldGuardPlugin plugin, List<World> worlds,
-            GlobalRegionManager regionMgr, ConfigurationManager mgr) {
+            ConfigurationManager mgr) {
         appendHeader("World Configurations");
         
         LogListBlock log = new LogListBlock();
@@ -286,24 +280,6 @@ public class ReportWriter {
                         config.getBlacklist().getItemCount());
                 blacklistLog.put("Is whitelist",
                         config.getBlacklist().isWhitelist());
-            }
-
-            RegionManager worldRegions = regionMgr.get(world);
-
-            regionsLog.put("Type", worldRegions.getClass().getCanonicalName());
-            regionsLog.put("Number of regions", worldRegions.getRegions().size());
-            LogListBlock globalRegionLog = regionsLog.putChild("Global region");
-            
-            ProtectedRegion globalRegion = worldRegions.getRegion("__global__");
-            if (globalRegion == null) {
-                globalRegionLog.put("Status", "UNDEFINED");
-            } else {
-                for (Flag<?> flag : DefaultFlag.getFlags()) {
-                    if (flag instanceof StateFlag) {
-                        globalRegionLog.put(flag.getName(),
-                                globalRegion.getFlag(flag));
-                    }
-                }
             }
         }
 

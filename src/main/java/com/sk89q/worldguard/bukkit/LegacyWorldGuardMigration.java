@@ -30,9 +30,6 @@ import java.util.logging.Logger;
 
 import org.bukkit.World;
 
-import com.sk89q.worldguard.protection.databases.CSVDatabase;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-
 /**
  * Utility methods for porting from legacy versions.
  * 
@@ -74,41 +71,6 @@ public class LegacyWorldGuardMigration {
                 		"blacklist defined!");
             }
             
-        }
-    }
-
-    /**
-     * Migrate region settings.
-     * 
-     * @param plugin
-     */
-    public static void migrateRegions(WorldGuardPlugin plugin) {
-        try {
-            File oldDatabase = new File(plugin.getDataFolder(), "regions.txt");
-            if (!oldDatabase.exists()) return;
-            
-            logger.info("WorldGuard: The regions database has changed in 4.x. "
-                    + "Your old regions database will be converted to the new format "
-                    + "and set as your primarily world's database.");
-
-            World w = plugin.getServer().getWorlds().get(0);
-            RegionManager mgr = plugin.getGlobalRegionManager().get(w);
-
-            // First load up the old database using the CSV loader
-            CSVDatabase db = new CSVDatabase(oldDatabase);
-            db.load();
-            
-            // Then save the new database
-            mgr.setRegions(db.getRegions());
-            mgr.save();
-            
-            oldDatabase.renameTo(new File(plugin.getDataFolder(), "regions.txt.old"));
-
-            logger.info("WorldGuard: Regions database converted!");
-        } catch (FileNotFoundException e) {
-        } catch (IOException e) {
-            logger.warning("WorldGuard: Failed to load regions: "
-                    + e.getMessage());
         }
     }
 

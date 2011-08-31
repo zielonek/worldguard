@@ -28,12 +28,6 @@ import com.sk89q.minecraft.util.commands.NestedCommand;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 public class ProtectionCommands {
-    @Command(aliases = {"region"},
-            desc = "Region management commands")
-    @NestedCommand({RegionCommands.class, RegionMemberCommands.class})
-    public static void region(CommandContext args, WorldGuardPlugin plugin,
-            CommandSender sender) throws CommandException {
-    }
 
     @Command(aliases = {"worldguard"},
             desc = "WorldGuard commands")

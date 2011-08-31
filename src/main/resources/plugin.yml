@@ -28,10 +28,6 @@ commands:
         description: Stacks items in the player's inventory
         usage: /<command>
         aliases: ;
-    region:
-        description: Adjust protected regions
-        usage: /<command> <action> ...
-        aliases: [rg, regions]
     locate:
         description: Set your compass towards a person
         usage: /<command> <target>

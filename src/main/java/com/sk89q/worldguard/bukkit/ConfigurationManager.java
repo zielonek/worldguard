@@ -82,10 +82,8 @@ public class ConfigurationManager {
     private Set<String> hasAmphibious = new HashSet<String>();
     
     public boolean suppressTickSyncWarnings;
-    public boolean useRegionsScheduler;
     public boolean activityHaltToggle = false;
     public boolean autoGodMode;
-    public boolean usePlayerMove;
 
     /**
      * Construct the object.
@@ -110,12 +108,8 @@ public class ConfigurationManager {
 
         suppressTickSyncWarnings = config.getBoolean(
                 "suppress-tick-sync-warnings", false);
-        useRegionsScheduler = config.getBoolean(
-                "regions.use-scheduler", true);
         autoGodMode = config.getBoolean(
                 "auto-invincible-permission", false);
-        usePlayerMove = config.getBoolean(
-                "use-player-move-event", true);
 
         // Load configurations for each world
         for (World world : plugin.getServer().getWorlds()) {

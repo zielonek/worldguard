@@ -56,8 +56,6 @@ import com.sk89q.worldguard.TickSyncDelayLoggerFilter;
 import com.sk89q.worldguard.bukkit.commands.GeneralCommands;
 import com.sk89q.worldguard.bukkit.commands.ProtectionCommands;
 import com.sk89q.worldguard.bukkit.commands.ToggleCommands;
-import com.sk89q.worldguard.protection.GlobalRegionManager;
-import com.sk89q.worldguard.protection.managers.RegionManager;
 
 /**
  * The main class for WorldGuard as a Bukkit plugin.
@@ -76,11 +74,6 @@ public class WorldGuardPlugin extends JavaPlugin {
      * We just set it up and register commands against it.
      */
     private final CommandsManager<CommandSender> commands;
-
-    /**
-     * Handles the region databases for all worlds.
-     */
-    private final GlobalRegionManager globalRegionManager;
     
     /**
      * Handles all configuration.
@@ -94,11 +87,6 @@ public class WorldGuardPlugin extends JavaPlugin {
      * the permission methods.
      */
     private PermissionsResolverManager perms;
-    
-    /**
-     * Used for scheduling flags.
-     */
-    private FlagStateManager flagStateManager;
 
     /**
      * Construct objects. Actual loading occurs when the plugin is enabled, so
@@ -106,7 +94,6 @@ public class WorldGuardPlugin extends JavaPlugin {
      */
     public WorldGuardPlugin() {
         configuration = new ConfigurationManager(this);
-        globalRegionManager = new GlobalRegionManager(this);
         
         final WorldGuardPlugin plugin = this;
         commands = new CommandsManager<CommandSender>() {
@@ -139,20 +126,9 @@ public class WorldGuardPlugin extends JavaPlugin {
         
         // Load the configuration
         configuration.load();
-        globalRegionManager.preload();
-        
-        // Migrate regions after the regions were loaded because
-        // the migration code reuses the loaded region managers
-        LegacyWorldGuardMigration.migrateRegions(this);
 
         // Load permissions
         (new PermissionsResolverServerListener(perms)).register(this);
-
-        flagStateManager = new FlagStateManager(this);
-
-        if (configuration.useRegionsScheduler) {
-            getServer().getScheduler().scheduleAsyncRepeatingTask(this, flagStateManager, FlagStateManager.RUN_DELAY, FlagStateManager.RUN_DELAY);
-        }
 
         if (configuration.suppressTickSyncWarnings) {
             Logger.getLogger("Minecraft").setFilter(
@@ -186,7 +162,6 @@ public class WorldGuardPlugin extends JavaPlugin {
      * Called on plugin disable.
      */
     public void onDisable() {
-        globalRegionManager.unload();
         configuration.unload();
         this.getServer().getScheduler().cancelTasks(this);
 
@@ -223,15 +198,6 @@ public class WorldGuardPlugin extends JavaPlugin {
     }
 
     /**
-     * Get the GlobalRegionManager.
-     * 
-     * @return
-     */
-    public GlobalRegionManager getGlobalRegionManager() {
-        return globalRegionManager;
-    }
-
-    /**
      * Get the WorldGuardConfiguraton.
      *
      * @return
@@ -240,15 +206,6 @@ public class WorldGuardPlugin extends JavaPlugin {
     @Deprecated
     public ConfigurationManager getGlobalConfiguration() {
         return getGlobalStateManager();
-    }
-    
-    /**
-     * Gets the flag state manager.
-     * 
-     * @return
-     */
-    public FlagStateManager getFlagStateManager() {
-        return flagStateManager;
     }
 
     /**
@@ -724,53 +681,6 @@ public class WorldGuardPlugin extends JavaPlugin {
                 player.sendMessage(msg);
             }
         }
-    }
-    
-    /**
-     * Forgets a player.
-     * 
-     * @param player
-     */
-    public void forgetPlayer(Player player) {
-        flagStateManager.forget(player);
-    }
-    
-    /**
-     * Checks to see if a player can build at a location. This will return
-     * true if region protection is disabled.
-     * 
-     * @param player
-     * @param loc
-     * @return
-     */
-    public boolean canBuild(Player player, Location loc) {
-        return getGlobalRegionManager().canBuild(player, loc);
-    }
-    
-    /**
-     * Checks to see if a player can build at a location. This will return
-     * true if region protection is disabled.
-     * 
-     * @param player
-     * @param block
-     * @return
-     */
-    public boolean canBuild(Player player, Block block) {
-        return getGlobalRegionManager().canBuild(player, block);
-    }
-
-    /**
-     * Gets the region manager for a world.
-     *
-     * @param world world to get the region manager for
-     * @return the region manager or null if regions are not enabled
-     */
-    public RegionManager getRegionManager(World world) {
-        if (!getGlobalStateManager().get(world).useRegions) {
-            return null;
-        }
-
-        return getGlobalRegionManager().get(world);
     }
 
     /**

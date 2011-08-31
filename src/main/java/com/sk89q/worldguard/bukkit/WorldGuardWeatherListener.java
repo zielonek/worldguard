@@ -18,11 +18,8 @@
  */
 package com.sk89q.worldguard.bukkit;
 
-import static com.sk89q.worldguard.bukkit.BukkitUtil.toVector;
-
 import java.util.logging.Logger;
 
-import org.bukkit.Location;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.weather.LightningStrikeEvent;
@@ -30,11 +27,6 @@ import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.event.weather.WeatherListener;
 import org.bukkit.plugin.PluginManager;
-
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.managers.RegionManager;
 
 public class WorldGuardWeatherListener extends WeatherListener {
 
@@ -132,17 +124,6 @@ public class WorldGuardWeatherListener extends WeatherListener {
         if (wcfg.disallowedLightningBlocks.size() > 0) {
             int targetId = event.getLightning().getLocation().getBlock().getTypeId();
             if (wcfg.disallowedLightningBlocks.contains(targetId)) {
-                event.setCancelled(true);
-            }
-        }
-
-        Location loc = event.getLightning().getLocation();
-        if (wcfg.useRegions) {
-            Vector pt = toVector(loc);
-            RegionManager mgr = plugin.getGlobalRegionManager().get(loc.getWorld());
-            ApplicableRegionSet set = mgr.getApplicableRegions(pt);
-
-            if (!set.allows(DefaultFlag.LIGHTNING)) {
                 event.setCancelled(true);
             }
         }

@@ -62,12 +62,8 @@ import org.bukkit.event.painting.PaintingPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 
-import com.sk89q.worldedit.Vector;
 import com.sk89q.worldguard.blacklist.events.BlockBreakBlacklistEvent;
 import com.sk89q.worldguard.blacklist.events.ItemUseBlacklistEvent;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.managers.RegionManager;
 
 /**
  * Listener for entity related events.
@@ -239,12 +235,6 @@ public class WorldGuardEntityListener extends EntityListener {
             WorldConfiguration wcfg = cfg.get(player.getWorld());
 
             if (isInvincible(player)) {
-                if (wcfg.regionInvinciblityRemovesMobs
-                        && attacker instanceof LivingEntity && !(attacker instanceof Player)
-                        && !(attacker instanceof Tameable && ((Tameable) attacker).isTamed())) {
-                    attacker.remove();
-                }
-
                 event.setCancelled(true);
                 return;
             }
@@ -259,32 +249,10 @@ public class WorldGuardEntityListener extends EntityListener {
                 return;
             }
 
-            if (attacker != null && attacker instanceof Player) {
-                if (wcfg.useRegions) {
-                    Vector pt = toVector(defender.getLocation());
-                    RegionManager mgr = plugin.getGlobalRegionManager().get(player.getWorld());
-
-                    if (!mgr.getApplicableRegions(pt).allows(DefaultFlag.PVP)) {
-                        ((Player) attacker).sendMessage(ChatColor.DARK_RED + "You are in a no-PvP area.");
-                        event.setCancelled(true);
-                        return;
-                    }
-                }
-            }
-
             if (attacker != null && attacker instanceof TNTPrimed) {
                 if (wcfg.blockTNTExplosions) {
                     event.setCancelled(true);
                     return;
-                }
-                if (wcfg.useRegions) {
-                    Vector pt = toVector(defender.getLocation());
-                    RegionManager mgr = plugin.getGlobalRegionManager().get(player.getWorld());
-                    ApplicableRegionSet set = mgr.getApplicableRegions(pt);
-                    if (!set.allows(DefaultFlag.TNT)) {
-                        event.setCancelled(true);
-                        return;
-                    }
                 }
             }
 
@@ -292,15 +260,6 @@ public class WorldGuardEntityListener extends EntityListener {
                 if (wcfg.blockFireballExplosions) {
                     event.setCancelled(true);
                     return;
-                }
-                if (wcfg.useRegions) {
-                    Vector pt = toVector(defender.getLocation());
-                    RegionManager mgr = plugin.getGlobalRegionManager().get(player.getWorld());
-                    ApplicableRegionSet set = mgr.getApplicableRegions(pt);
-                    if (!set.allows(DefaultFlag.GHAST_FIREBALL)) {
-                        event.setCancelled(true);
-                        return;
-                    }
                 }
             }
 
@@ -315,25 +274,6 @@ public class WorldGuardEntityListener extends EntityListener {
                     event.setCancelled(true);
                     return;
                 }
-
-                if (wcfg.useRegions) {
-                    Vector pt = toVector(defender.getLocation());
-                    RegionManager mgr = plugin.getGlobalRegionManager().get(player.getWorld());
-                    ApplicableRegionSet set = mgr.getApplicableRegions(pt);
-
-                    if (!set.allows(DefaultFlag.MOB_DAMAGE)) {
-                        event.setCancelled(true);
-                        return;
-                    }
-
-                    if (attacker instanceof Creeper) {
-                        if (!set.allows(DefaultFlag.CREEPER_EXPLOSION)) {
-                            event.setCancelled(true);
-                            return;
-                        }
-                    }
-                }
-
             }
         }
     }
@@ -358,31 +298,10 @@ public class WorldGuardEntityListener extends EntityListener {
                 return;
             }
 
-            if (attacker != null && attacker instanceof Player) {
-                if (wcfg.useRegions) {
-                    Vector pt = toVector(defender.getLocation());
-                    RegionManager mgr = plugin.getGlobalRegionManager().get(player.getWorld());
-
-                    if (!mgr.getApplicableRegions(pt).allows(DefaultFlag.PVP)) {
-                        ((Player) attacker).sendMessage(ChatColor.DARK_RED + "You are in a no-PvP area.");
-                        event.setCancelled(true);
-                        return;
-                    }
-                }
-            }
             if (attacker != null && attacker instanceof Skeleton) {
                 if (wcfg.disableMobDamage) {
                     event.setCancelled(true);
                     return;
-                }
-                if (wcfg.useRegions) {
-                    Vector pt = toVector(defender.getLocation());
-                    RegionManager mgr = plugin.getGlobalRegionManager().get(player.getWorld());
-
-                    if (!mgr.getApplicableRegions(pt).allows(DefaultFlag.MOB_DAMAGE)) {
-                        event.setCancelled(true);
-                        return;
-                    }
                 }
             }
         }
@@ -487,7 +406,7 @@ public class WorldGuardEntityListener extends EntityListener {
         if (entity instanceof Player) {
             Player player = (Player) entity;
 
-            if (cfg.hasGodMode(player) || (wcfg.useRegions && RegionQueryUtil.isInvincible(plugin, player))) {
+            if (cfg.hasGodMode(player)) {
                 event.setCancelled(true);
                 return;
             }
@@ -520,50 +439,16 @@ public class WorldGuardEntityListener extends EntityListener {
                 event.setCancelled(true);
                 return;
             }
-
-            if (wcfg.useRegions) {
-                if (wcfg.useRegions) {
-                    RegionManager mgr = plugin.getGlobalRegionManager().get(world);
-
-                    for (Block block : event.blockList()) {
-                        if (!mgr.getApplicableRegions(toVector(block)).allows(DefaultFlag.CREEPER_EXPLOSION)) {
-                            event.setCancelled(true);
-                            return;
-                        }
-                    }
-                }
-            }
         } else if (ent instanceof TNTPrimed) {
             if (wcfg.blockTNTBlockDamage || wcfg.blockTNTExplosions) {
                 event.setCancelled(true);
                 return;
             }
 
-            if (wcfg.useRegions) {
-                RegionManager mgr = plugin.getGlobalRegionManager().get(world);
-
-                for (Block block : event.blockList()) {
-                    if (!mgr.getApplicableRegions(toVector(block)).allows(DefaultFlag.TNT)) {
-                        event.setCancelled(true);
-                        return;
-                    }
-                }
-            }
         } else if (ent instanceof Fireball) {
             if (wcfg.blockFireballBlockDamage || wcfg.blockFireballExplosions) {
                 event.setCancelled(true);
                 return;
-            }
-
-            if (wcfg.useRegions) {
-                RegionManager mgr = plugin.getGlobalRegionManager().get(world);
-
-                for (Block block : event.blockList()) {
-                    if (!mgr.getApplicableRegions(toVector(block)).allows(DefaultFlag.GHAST_FIREBALL)) {
-                        event.setCancelled(true);
-                        return;
-                    }
-                }
             }
         }
 
@@ -620,27 +505,6 @@ public class WorldGuardEntityListener extends EntityListener {
         if (wcfg.blockCreatureSpawn.contains(creaType)) {
             event.setCancelled(true);
             return;
-        }
-        
-        Location eventLoc = event.getLocation();
-        
-        if (wcfg.useRegions) {
-            Vector pt = toVector(eventLoc);
-            RegionManager mgr = plugin.getGlobalRegionManager().get(eventLoc.getWorld());
-            // @TODO get victims' stacktraces and find out why it's null anyway
-            if (mgr == null) return;
-            ApplicableRegionSet set = mgr.getApplicableRegions(pt);
-
-            if (!set.allows(DefaultFlag.MOB_SPAWNING)) {
-                event.setCancelled(true);
-                return;
-            }
-
-            Set<CreatureType> creatureTypes = set.getFlag(DefaultFlag.DENY_SPAWN);
-            if (creatureTypes != null && creatureTypes.contains(creaType)) {
-                event.setCancelled(true);
-                return;
-            }
         }
     }
 
@@ -711,14 +575,6 @@ public class WorldGuardEntityListener extends EntityListener {
                 return;
             }
         }
-
-        if (wcfg.useRegions) {
-            if (!plugin.getGlobalRegionManager().canBuild(player, painting.getLocation())) {
-                player.sendMessage(ChatColor.DARK_RED + "You don't have permission for this area.");
-                event.setCancelled(true);
-                return;
-            }
-        }
     }
 
     /**
@@ -737,14 +593,6 @@ public class WorldGuardEntityListener extends EntityListener {
             if (!wcfg.getBlacklist().check(
                     new ItemUseBlacklistEvent(plugin.wrapPlayer(player),
                             toVector(player.getLocation()), 321), false, false)) {
-                event.setCancelled(true);
-                return;
-            }
-        }
-
-        if (wcfg.useRegions) {
-            if (!plugin.getGlobalRegionManager().canBuild(player, placedOn.getLocation())) {
-                player.sendMessage(ChatColor.DARK_RED + "You don't have permission for this area.");
                 event.setCancelled(true);
                 return;
             }
@@ -777,22 +625,7 @@ public class WorldGuardEntityListener extends EntityListener {
      */
     private boolean isInvincible(Player player) {
         ConfigurationManager cfg = plugin.getGlobalStateManager();
-        WorldConfiguration wcfg = cfg.get(player.getWorld());
 
-        boolean god = cfg.hasGodMode(player);
-        if (wcfg.useRegions) {
-            Boolean flag = RegionQueryUtil.isAllowedInvinciblity(plugin, player);
-            boolean allowed = flag == null || flag == true;
-            boolean invincible = RegionQueryUtil.isInvincible(plugin, player);
-
-            if (allowed) {
-                return god || invincible;
-            } else {
-                return (god && plugin.hasPermission(player, "worldguard.god.override-regions"))
-                    || invincible;
-            }
-        } else {
-            return god;
-        }
+        return cfg.hasGodMode(player);
     }
 }

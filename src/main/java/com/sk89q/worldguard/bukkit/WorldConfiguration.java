@@ -117,16 +117,7 @@ public class WorldConfiguration {
     public boolean teleportOnVoid;
     public boolean disableExplosionDamage;
     public boolean disableMobDamage;
-    public boolean useRegions;
-    public boolean highFreqFlags;
-    public int regionWand = 287;
     public Set<CreatureType> blockCreatureSpawn;
-    public boolean useiConomy;
-    public boolean buyOnClaim;
-    public double buyOnClaimPrice;
-    public int maxClaimVolume;
-    public boolean claimOnlyInsideExistingRegions;
-    public int maxRegionCountPerPlayer;
     public boolean antiWolfDumbness;
     public boolean signChestProtection;
     public boolean removeInfiniteStacks;
@@ -147,7 +138,6 @@ public class WorldConfiguration {
     public boolean disableSnowFormation;
     public boolean disableIceFormation;
     public boolean disableLeafDecay;
-    public boolean regionInvinciblityRemovesMobs;
 
     /* Configuration data end */
 
@@ -324,18 +314,6 @@ public class WorldConfiguration {
         disableSnowFormation = getBoolean("dynamics.disable-snow-formation", false);
         disableIceFormation = getBoolean("dynamics.disable-ice-formation", false);
         disableLeafDecay = getBoolean("dynamics.disable-leaf-decay", false);
-
-        useRegions = getBoolean("regions.enable", true);
-        regionInvinciblityRemovesMobs = getBoolean("regions.invincibility-removes-mobs", false);
-        highFreqFlags = getBoolean("regions.high-frequency-flags", false);
-        regionWand = getInt("regions.wand", 287);
-        maxClaimVolume = getInt("regions.max-claim-volume", 30000);
-        claimOnlyInsideExistingRegions = getBoolean("regions.claim-only-inside-existing-regions", false);
-        maxRegionCountPerPlayer = getInt("regions.max-region-count-per-player", 7);
-
-        useiConomy = getBoolean("iconomy.enable", false);
-        buyOnClaim = getBoolean("iconomy.buy-on-claim", false);
-        buyOnClaimPrice = getDouble("iconomy.buy-on-claim-price", 1.0);
 
         blockCreatureSpawn = new HashSet<CreatureType>();
         for (String creatureName : getStringList("mobs.block-creature-spawn", null)) {

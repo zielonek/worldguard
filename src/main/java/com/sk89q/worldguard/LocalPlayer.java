@@ -19,7 +19,7 @@
 
 package com.sk89q.worldguard;
 
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.math.Vector;
 
 public abstract class LocalPlayer {
     /**

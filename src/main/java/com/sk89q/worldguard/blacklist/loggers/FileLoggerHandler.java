@@ -35,8 +35,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.ItemType;
+import com.sk89q.worldedit.math.Vector;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.blacklist.events.BlacklistEvent;
 import com.sk89q.worldguard.blacklist.events.BlockBreakBlacklistEvent;

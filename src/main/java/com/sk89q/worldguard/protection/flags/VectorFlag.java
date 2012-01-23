@@ -24,7 +24,7 @@ import java.util.Map;
 import org.bukkit.command.CommandSender;
 
 import com.sk89q.minecraft.util.commands.CommandException;
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.math.Vector;
 import com.sk89q.worldguard.bukkit.BukkitUtil;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 

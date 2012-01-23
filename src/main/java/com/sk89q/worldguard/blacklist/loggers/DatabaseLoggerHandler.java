@@ -26,7 +26,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.math.Vector;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.blacklist.events.BlacklistEvent;
 import com.sk89q.worldguard.blacklist.events.BlockBreakBlacklistEvent;

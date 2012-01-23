@@ -19,9 +19,8 @@
 
 package com.sk89q.worldguard.protection;
 
-import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.BlockVector2D;
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.math.Vector;
+import com.sk89q.worldedit.math.Vector2D;
 import com.sk89q.worldguard.TestPlayer;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
@@ -87,13 +86,13 @@ public class RegionOverlapTest {
         DefaultDomain domain = new DefaultDomain();
         domain.addGroup(COURTYARD_GROUP);
 
-        ArrayList<BlockVector2D> points = new ArrayList<BlockVector2D>();
-        points.add(new BlockVector2D(0, 0));
-        points.add(new BlockVector2D(10, 0));
-        points.add(new BlockVector2D(10, 10));
-        points.add(new BlockVector2D(0, 10));
+        ArrayList<Vector2D> points = new ArrayList<Vector2D>();
+        points.add(new Vector2D(0, 0));
+        points.add(new Vector2D(10, 0));
+        points.add(new Vector2D(10, 10));
+        points.add(new Vector2D(0, 10));
 
-        //ProtectedRegion region = new ProtectedCuboidRegion(COURTYARD_ID, new BlockVector(0, 0, 0), new BlockVector(10, 10, 10));
+        //ProtectedRegion region = new ProtectedCuboidRegion(COURTYARD_ID, new Vector(0, 0, 0), new Vector(10, 10, 10));
         ProtectedRegion region = new ProtectedPolygonalRegion(COURTYARD_ID, points, 0, 10);
 
         region.setOwners(domain);
@@ -107,7 +106,7 @@ public class RegionOverlapTest {
         domain.addGroup(MEMBER_GROUP);
 
         ProtectedRegion region = new ProtectedCuboidRegion(FOUNTAIN_ID,
-                new BlockVector(0, 0, 0), new BlockVector(5, 5, 5));
+                new Vector(0, 0, 0), new Vector(5, 5, 5));
         region.setMembers(domain);
         manager.addRegion(region);
 
@@ -118,7 +117,7 @@ public class RegionOverlapTest {
 
     void setUpNoFireRegion() throws Exception {
         ProtectedRegion region = new ProtectedCuboidRegion(NO_FIRE_ID,
-                new BlockVector(100, 100, 100), new BlockVector(200, 200, 200));
+                new Vector(100, 100, 100), new Vector(200, 200, 200));
         manager.addRegion(region);
         region.setFlag(DefaultFlag.FIRE_SPREAD, StateFlag.State.DENY);
     }

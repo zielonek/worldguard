@@ -37,9 +37,8 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.ItemStack;
 
-import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BlockType;
+import com.sk89q.worldedit.math.Vector;
 
 public class BukkitUtil {
 
@@ -53,8 +52,8 @@ public class BukkitUtil {
      * @param block
      * @return
      */
-    public static BlockVector toVector(Block block) {
-        return new BlockVector(block.getX(), block.getY(), block.getZ());
+    public static Vector toVector(Block block) {
+        return new Vector(block.getX(), block.getY(), block.getZ());
     }
     
     /**

@@ -33,9 +33,8 @@ import java.util.logging.Logger;
 import com.sk89q.util.yaml.YAMLFormat;
 import com.sk89q.util.yaml.YAMLNode;
 import com.sk89q.util.yaml.YAMLProcessor;
-import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.BlockVector2D;
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.math.Vector;
+import com.sk89q.worldedit.math.Vector2D;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.Flag;
@@ -97,13 +96,13 @@ public class YAMLDatabase extends AbstractProtectionDatabase {
                 } else if (type.equals("cuboid")) {
                     Vector pt1 = checkNonNull(node.getVector("min"));
                     Vector pt2 = checkNonNull(node.getVector("max"));
-                    BlockVector min = Vector.getMinimum(pt1, pt2).toBlockVector();
-                    BlockVector max = Vector.getMaximum(pt1, pt2).toBlockVector();
+                    Vector min = Vector.getMinimum(pt1, pt2);
+                    Vector max = Vector.getMaximum(pt1, pt2);
                     region = new ProtectedCuboidRegion(id, min, max);
                 } else if (type.equals("poly2d")) {
                     Integer minY = checkNonNull(node.getInt("min-y"));
                     Integer maxY = checkNonNull(node.getInt("max-y"));
-                    List<BlockVector2D> points = node.getBlockVector2dList("points", null);
+                    List<Vector2D> points = node.getVector2dList("points", null);
                     region = new ProtectedPolygonalRegion(id, points, minY, maxY);
                 } else if (type.equals("global")) {
                     region = new GlobalProtectedRegion(id);
@@ -215,7 +214,7 @@ public class YAMLDatabase extends AbstractProtectionDatabase {
                 node.setProperty("max-y", poly.getMaximumPoint().getBlockY());
                 
                 List<Map<String, Object>> points = new ArrayList<Map<String,Object>>();
-                for (BlockVector2D point : poly.getPoints()) {
+                for (Vector2D point : poly.getPoints()) {
                     Map<String, Object> data = new HashMap<String, Object>();
                     data.put("x", point.getBlockX());
                     data.put("z", point.getBlockZ());

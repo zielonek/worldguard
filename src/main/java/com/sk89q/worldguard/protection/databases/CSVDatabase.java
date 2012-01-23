@@ -31,8 +31,7 @@ import java.util.regex.Pattern;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.math.Vector;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -117,8 +116,8 @@ public class CSVDatabase extends AbstractProtectionDatabase {
                             Integer.parseInt(line[6]),
                             Integer.parseInt(line[7]));
 
-                    BlockVector min = Vector.getMinimum(pt1, pt2).toBlockVector();
-                    BlockVector max = Vector.getMaximum(pt1, pt2).toBlockVector();
+                    Vector min = Vector.getMinimum(pt1, pt2);
+                    Vector max = Vector.getMaximum(pt1, pt2);
 
                     int priority = entries.get(8) == null ? 0 : Integer.parseInt(entries.get(8));
                     String ownersData = entries.get(9);
@@ -140,8 +139,8 @@ public class CSVDatabase extends AbstractProtectionDatabase {
                             Integer.parseInt(line[6]),
                             Integer.parseInt(line[7]));
 
-                    BlockVector min = Vector.getMinimum(pt1, pt2).toBlockVector();
-                    BlockVector max = Vector.getMaximum(pt1, pt2).toBlockVector();
+                    Vector min = Vector.getMinimum(pt1, pt2);
+                    Vector max = Vector.getMaximum(pt1, pt2);
 
                     int priority = entries.get(8) == null ? 0 : Integer.parseInt(entries.get(8));
                     String parentId = entries.get(9);

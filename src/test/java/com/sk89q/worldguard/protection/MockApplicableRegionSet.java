@@ -19,7 +19,7 @@
 
 package com.sk89q.worldguard.protection;
 
-import com.sk89q.worldedit.BlockVector;
+import com.sk89q.worldedit.math.Vector;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.TestPlayer;
 import com.sk89q.worldguard.protection.regions.GlobalProtectedRegion;
@@ -52,7 +52,7 @@ public class MockApplicableRegionSet {
 
     public ProtectedRegion add(int priority) {
         ProtectedRegion region = new ProtectedCuboidRegion(getNextId(),
-                new BlockVector(0, 0, 0), new BlockVector(1, 1, 1));
+                new Vector(0, 0, 0), new Vector(1, 1, 1));
         region.setPriority(priority);
         add(region);
         return region;
@@ -61,7 +61,7 @@ public class MockApplicableRegionSet {
     public ProtectedRegion add(int priority, ProtectedRegion parent)
             throws ProtectedRegion.CircularInheritanceException {
         ProtectedRegion region = new ProtectedCuboidRegion(getNextId(),
-                new BlockVector(0, 0, 0), new BlockVector(1, 1, 1));
+                new Vector(0, 0, 0), new Vector(1, 1, 1));
         region.setPriority(priority);
         region.setParent(parent);
         add(region);

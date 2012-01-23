@@ -21,9 +21,8 @@ package com.sk89q.worldguard.protection.regions;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.BlockVector2D;
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.math.Vector;
+import com.sk89q.worldedit.math.Vector2D;
 import com.sk89q.worldguard.protection.UnsupportedIntersectionException;
 
 /**
@@ -40,7 +39,7 @@ public class ProtectedCuboidRegion extends ProtectedRegion {
      * @param pt1
      * @param pt2
      */
-    public ProtectedCuboidRegion(String id, BlockVector pt1, BlockVector pt2) {
+    public ProtectedCuboidRegion(String id, Vector pt1, Vector pt2) {
         super(id);
         setMinMaxPoints(pt1, pt2);
     }
@@ -51,7 +50,7 @@ public class ProtectedCuboidRegion extends ProtectedRegion {
      * @param pt1
      * @param pt2
      */
-    private void setMinMaxPoints(BlockVector pt1, BlockVector pt2) {
+    private void setMinMaxPoints(Vector pt1, Vector pt2) {
         List<Vector> points = new ArrayList<Vector>();
         points.add(pt1);
         points.add(pt2);
@@ -63,7 +62,7 @@ public class ProtectedCuboidRegion extends ProtectedRegion {
      *
      * @param pt
      */
-    public void setMinimumPoint(BlockVector pt) {
+    public void setMinimumPoint(Vector pt) {
         setMinMaxPoints(pt, max);
     }
 
@@ -72,21 +71,21 @@ public class ProtectedCuboidRegion extends ProtectedRegion {
      *
      * @param pt
      */
-    public void setMaximumPoint(BlockVector pt) {
+    public void setMaximumPoint(Vector pt) {
         setMinMaxPoints(min, pt);
     }
 
-    public List<BlockVector2D> getPoints() {
-        List<BlockVector2D> pts = new ArrayList<BlockVector2D>();
+    public List<Vector2D> getPoints() {
+        List<Vector2D> pts = new ArrayList<Vector2D>();
         int x1 = min.getBlockX();
         int x2 = max.getBlockX();
         int z1 = min.getBlockZ();
         int z2 = max.getBlockZ();
 
-        pts.add(new BlockVector2D(x1, z1));
-        pts.add(new BlockVector2D(x2, z1));
-        pts.add(new BlockVector2D(x1, z2));
-        pts.add(new BlockVector2D(x2, z2));
+        pts.add(new Vector2D(x1, z1));
+        pts.add(new Vector2D(x2, z1));
+        pts.add(new Vector2D(x1, z2));
+        pts.add(new Vector2D(x2, z2));
 
         return pts;
     }
@@ -111,10 +110,10 @@ public class ProtectedCuboidRegion extends ProtectedRegion {
         if (region instanceof ProtectedCuboidRegion) {
             ProtectedCuboidRegion r1 = (ProtectedCuboidRegion) this;
             ProtectedCuboidRegion r2 = (ProtectedCuboidRegion) region;
-            BlockVector min1 = r1.getMinimumPoint();
-            BlockVector max1 = r1.getMaximumPoint();
-            BlockVector min2 = r2.getMinimumPoint();
-            BlockVector max2 = r2.getMaximumPoint();
+            Vector min1 = r1.getMinimumPoint();
+            Vector max1 = r1.getMaximumPoint();
+            Vector min2 = r2.getMinimumPoint();
+            Vector max2 = r2.getMaximumPoint();
 
             return !(min1.getBlockX() > max2.getBlockX()
                     || min1.getBlockY() > max2.getBlockY()

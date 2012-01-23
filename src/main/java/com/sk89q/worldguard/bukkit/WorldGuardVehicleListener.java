@@ -18,7 +18,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
-import com.sk89q.worldedit.Vector;
+
+import com.sk89q.worldedit.math.Vector;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.bukkit.FlagStateManager.PlayerFlagState;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;

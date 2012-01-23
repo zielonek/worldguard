@@ -34,12 +34,11 @@ import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.minecraft.util.commands.CommandPermissions;
 import com.sk89q.minecraft.util.commands.CommandPermissionsException;
-import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.bukkit.selections.Polygonal2DSelection;
 import com.sk89q.worldedit.bukkit.selections.Selection;
+import com.sk89q.worldedit.math.Vector;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.bukkit.WorldConfiguration;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -108,8 +107,8 @@ public class RegionCommands {
             int maxY = polySel.getNativeMaximumPoint().getBlockY();
             region = new ProtectedPolygonalRegion(id, polySel.getNativePoints(), minY, maxY);
         } else if (sel instanceof CuboidSelection) {
-            BlockVector min = sel.getNativeMinimumPoint().toBlockVector();
-            BlockVector max = sel.getNativeMaximumPoint().toBlockVector();
+            Vector min = sel.getNativeMinimumPoint();
+            Vector max = sel.getNativeMaximumPoint();
             region = new ProtectedCuboidRegion(id, min, max);
         } else {
             throw new CommandException(
@@ -177,8 +176,8 @@ public class RegionCommands {
             int maxY = polySel.getNativeMaximumPoint().getBlockY();
             region = new ProtectedPolygonalRegion(id, polySel.getNativePoints(), minY, maxY);
         } else if (sel instanceof CuboidSelection) {
-            BlockVector min = sel.getNativeMinimumPoint().toBlockVector();
-            BlockVector max = sel.getNativeMaximumPoint().toBlockVector();
+            Vector min = sel.getNativeMinimumPoint();
+            Vector max = sel.getNativeMaximumPoint();
             region = new ProtectedCuboidRegion(id, min, max);
         } else {
             throw new CommandException(
@@ -246,8 +245,8 @@ public class RegionCommands {
             int maxY = polySel.getNativeMaximumPoint().getBlockY();
             region = new ProtectedPolygonalRegion(id, polySel.getNativePoints(), minY, maxY);
         } else if (sel instanceof CuboidSelection) {
-            BlockVector min = sel.getNativeMinimumPoint().toBlockVector();
-            BlockVector max = sel.getNativeMaximumPoint().toBlockVector();
+            Vector min = sel.getNativeMinimumPoint();
+            Vector max = sel.getNativeMaximumPoint();
             region = new ProtectedCuboidRegion(id, min, max);
         } else {
             throw new CommandException(
@@ -460,8 +459,8 @@ public class RegionCommands {
                 + owners.toUserFriendlyString());
         sender.sendMessage(ChatColor.LIGHT_PURPLE + "Members: "
                 + members.toUserFriendlyString());
-        BlockVector min = region.getMinimumPoint();
-        BlockVector max = region.getMaximumPoint();
+        Vector min = region.getMinimumPoint();
+        Vector max = region.getMaximumPoint();
         String c = "(" + min.getBlockX() + "," + min.getBlockY() + "," + min.getBlockZ() + ")";
         c += " (" +max.getBlockX() + "," + max.getBlockY() + "," + max.getBlockZ() + ")";
         sender.sendMessage(ChatColor.LIGHT_PURPLE + "Bounds: " + c);

@@ -29,7 +29,7 @@ import java.util.TreeMap;
 import org.khelekore.prtree.MBRConverter;
 import org.khelekore.prtree.PRTree;
 
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.math.Vector;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.databases.ProtectionDatabaseException;

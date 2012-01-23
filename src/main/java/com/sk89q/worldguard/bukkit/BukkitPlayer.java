@@ -22,7 +22,7 @@ package com.sk89q.worldguard.bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.math.Vector;
 import com.sk89q.worldguard.LocalPlayer;
 
 public class BukkitPlayer extends LocalPlayer {

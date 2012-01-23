@@ -34,9 +34,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 
-import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.BlockVector2D;
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.math.Vector;
+import com.sk89q.worldedit.math.Vector2D;
 import com.sk89q.worldguard.bukkit.ConfigurationManager;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
@@ -310,8 +309,8 @@ public class MySQLDatabase extends AbstractProtectionDatabase {
                         cuboidResultSet.getInt("max_z")
                 );
 
-                BlockVector min = Vector.getMinimum(pt1, pt2).toBlockVector();
-                BlockVector max = Vector.getMaximum(pt1, pt2).toBlockVector();
+                Vector min = Vector.getMinimum(pt1, pt2);
+                Vector max = Vector.getMaximum(pt1, pt2);
                 ProtectedRegion region = new ProtectedCuboidRegion(
                         cuboidResultSet.getString("id"),
                         min,
@@ -380,13 +379,13 @@ public class MySQLDatabase extends AbstractProtectionDatabase {
 
                 Integer minY = poly2dResultSet.getInt("min_y");
                 Integer maxY = poly2dResultSet.getInt("max_y");
-                List<BlockVector2D> points = new ArrayList<BlockVector2D>();
+                List<Vector2D> points = new ArrayList<Vector2D>();
 
                 poly2dVectorStatement.setString(1, id);
                 ResultSet poly2dVectorResultSet = poly2dVectorStatement.executeQuery();
 
                 while(poly2dVectorResultSet.next()) {
-                    points.add(new BlockVector2D(
+                    points.add(new Vector2D(
                             poly2dVectorResultSet.getInt("x"),
                             poly2dVectorResultSet.getInt("z")
                     ));
@@ -825,8 +824,8 @@ public class MySQLDatabase extends AbstractProtectionDatabase {
                 ") VALUES (?, ?, ?, ?, ?, ?, ?)"
         );
 
-        BlockVector min = region.getMinimumPoint();
-        BlockVector max = region.getMaximumPoint();
+        Vector min = region.getMinimumPoint();
+        Vector max = region.getMaximumPoint();
 
         insertCuboidRegionStatement.setString(1, region.getId().toLowerCase());
         insertCuboidRegionStatement.setInt(2, min.getBlockZ());
@@ -878,7 +877,7 @@ public class MySQLDatabase extends AbstractProtectionDatabase {
                 ") VALUES (null, ?, ?, ?)"
         );
 
-        for (BlockVector2D point : region.getPoints()) {
+        for (Vector2D point : region.getPoints()) {
             insertPoly2dPointStatement.setString(1, region.getId().toLowerCase());
             insertPoly2dPointStatement.setInt(2, point.getBlockZ());
             insertPoly2dPointStatement.setInt(3, point.getBlockX());
@@ -922,8 +921,8 @@ public class MySQLDatabase extends AbstractProtectionDatabase {
                 "WHERE `region_id` = ? "
         );
 
-        BlockVector min = region.getMinimumPoint();
-        BlockVector max = region.getMaximumPoint();
+        Vector min = region.getMinimumPoint();
+        Vector max = region.getMaximumPoint();
 
         updateCuboidRegionStatement.setInt(1, min.getBlockZ());
         updateCuboidRegionStatement.setInt(2, min.getBlockY());

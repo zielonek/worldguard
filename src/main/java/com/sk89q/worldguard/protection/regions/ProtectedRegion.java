@@ -25,9 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.sk89q.worldedit.BlockVector;
-import com.sk89q.worldedit.BlockVector2D;
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.math.Vector;
+import com.sk89q.worldedit.math.Vector2D;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.UnsupportedIntersectionException;
@@ -40,8 +39,8 @@ import com.sk89q.worldguard.protection.flags.Flag;
  */
 public abstract class ProtectedRegion implements Comparable<ProtectedRegion> {
 
-    protected BlockVector min;
-    protected BlockVector max;
+    protected Vector min;
+    protected Vector max;
 
     private static final Pattern idPattern = Pattern.compile("^[A-Za-z0-9_,'\\-\\+/]{1,}$");
 
@@ -110,9 +109,9 @@ public abstract class ProtectedRegion implements Comparable<ProtectedRegion> {
             if (y > maxY) maxY = y;
             if (z > maxZ) maxZ = z;
         }
-        
-        min = new BlockVector(minX, minY, minZ);
-        max = new BlockVector(maxX, maxY, maxZ);
+
+        min = new Vector(minX, minY, minZ);
+        max = new Vector(maxX, maxY, maxZ);
     }
 
     /**
@@ -127,7 +126,7 @@ public abstract class ProtectedRegion implements Comparable<ProtectedRegion> {
      *
      * @return min point
      */
-    public BlockVector getMinimumPoint() {
+    public Vector getMinimumPoint() {
         return min;
     }
 
@@ -136,7 +135,7 @@ public abstract class ProtectedRegion implements Comparable<ProtectedRegion> {
      *
      * @return max point
      */
-    public BlockVector getMaximumPoint() {
+    public Vector getMaximumPoint() {
         return max;
     }
 
@@ -359,7 +358,7 @@ public abstract class ProtectedRegion implements Comparable<ProtectedRegion> {
      *
      * @return
      */
-    public abstract List<BlockVector2D> getPoints();
+    public abstract List<Vector2D> getPoints();
 
     /**
      * Get the number of blocks in this region
@@ -382,7 +381,7 @@ public abstract class ProtectedRegion implements Comparable<ProtectedRegion> {
      * @param pt
      * @return
      */
-    public boolean contains(BlockVector2D pt) {
+    public boolean contains(Vector2D pt) {
         return contains(new Vector(pt.getBlockX(), min.getBlockY(), pt.getBlockZ()));
     }
 
@@ -404,8 +403,8 @@ public abstract class ProtectedRegion implements Comparable<ProtectedRegion> {
      * @param pts
      * @return
      */
-    public boolean containsAny(List<BlockVector2D> pts) {
-        for (BlockVector2D pt : pts) {
+    public boolean containsAny(List<Vector2D> pts) {
+        for (Vector2D pt : pts) {
             if (contains(pt)) {
                 return true;
             }
@@ -457,15 +456,15 @@ public abstract class ProtectedRegion implements Comparable<ProtectedRegion> {
      * @param region
      */
     protected boolean intersectsBoundingBox(ProtectedRegion region) {
-        BlockVector rMaxPoint = region.getMaximumPoint();
-        BlockVector min = getMinimumPoint();
+        Vector rMaxPoint = region.getMaximumPoint();
+        Vector min = getMinimumPoint();
 
         if (rMaxPoint.getBlockX() < min.getBlockX()) return false;
         if (rMaxPoint.getBlockY() < min.getBlockY()) return false;
         if (rMaxPoint.getBlockZ() < min.getBlockZ()) return false;
 
-        BlockVector rMinPoint = region.getMinimumPoint();
-        BlockVector max = getMaximumPoint();
+        Vector rMinPoint = region.getMinimumPoint();
+        Vector max = getMaximumPoint();
 
         if (rMinPoint.getBlockX() > max.getBlockX()) return false;
         if (rMinPoint.getBlockY() > max.getBlockY()) return false;
@@ -481,10 +480,10 @@ public abstract class ProtectedRegion implements Comparable<ProtectedRegion> {
      * @return
      */
     protected boolean intersectsEdges(ProtectedRegion region) {
-        List<BlockVector2D> pts1 = getPoints();
-        List<BlockVector2D> pts2 = region.getPoints();
-        BlockVector2D lastPt1 = pts1.get(pts1.size() - 1);
-        BlockVector2D lastPt2 = pts2.get(pts2.size() - 1);
+        List<Vector2D> pts1 = getPoints();
+        List<Vector2D> pts2 = region.getPoints();
+        Vector2D lastPt1 = pts1.get(pts1.size() - 1);
+        Vector2D lastPt2 = pts2.get(pts2.size() - 1);
         for (int i = 0; i < pts1.size(); i++ ) {
             for (int j = 0; j < pts2.size(); j++) {
 

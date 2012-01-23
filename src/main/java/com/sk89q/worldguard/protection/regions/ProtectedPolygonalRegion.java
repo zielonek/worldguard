@@ -21,17 +21,17 @@ package com.sk89q.worldguard.protection.regions;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sk89q.worldedit.BlockVector2D;
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.math.Vector;
+import com.sk89q.worldedit.math.Vector2D;
 import com.sk89q.worldguard.protection.UnsupportedIntersectionException;
 
 public class ProtectedPolygonalRegion extends ProtectedRegion {
 
-    protected List<BlockVector2D> points;
+    protected List<Vector2D> points;
     protected int minY;
     protected int maxY;
 
-    public ProtectedPolygonalRegion(String id, List<BlockVector2D> points, int minY, int maxY) {
+    public ProtectedPolygonalRegion(String id, List<Vector2D> points, int minY, int maxY) {
         super(id);
         this.points = points;
         setMinMaxPoints(points, minY, maxY);
@@ -46,17 +46,17 @@ public class ProtectedPolygonalRegion extends ProtectedRegion {
      * @param minY
      * @param maxY
      */
-    private void setMinMaxPoints(List<BlockVector2D> points2D, int minY, int maxY) {
+    private void setMinMaxPoints(List<Vector2D> points2D, int minY, int maxY) {
         List<Vector> points = new ArrayList<Vector>();
         int y = minY;
-        for (BlockVector2D point2D : points2D) {
+        for (Vector2D point2D : points2D) {
             points.add(new Vector(point2D.getBlockX(), y, point2D.getBlockZ()));
             y = maxY;
         }
         setMinMaxPoints(points);
     }
 
-    public List<BlockVector2D> getPoints() {
+    public List<Vector2D> getPoints() {
         return points;
     }
 

@@ -21,7 +21,8 @@ package com.sk89q.worldguard;
 
 import java.util.Set;
 import java.util.HashSet;
-import com.sk89q.worldedit.Vector;
+
+import com.sk89q.worldedit.math.Vector;
 import com.sk89q.worldguard.LocalPlayer;
 
 public class TestPlayer extends LocalPlayer {

@@ -95,7 +95,7 @@ public class RegionCommands {
         Selection sel = worldEdit.getSelection(player);
         
         if (sel == null) {
-            throw new CommandException("Select a region with WorldEdit first.");
+            throw new CommandException("Zaznacz przekatne!");
         }
         
         RegionManager mgr = plugin.getGlobalRegionManager().get(sel.getWorld());
